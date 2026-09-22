@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 3.15)
+project(VitaStreamPC LANGUAGES CXX)
+set(CMAKE_CXX_STANDARD 17)
+add_executable(VitaStreamPC src/main.cpp)
+target_link_libraries(VitaStreamPC ws2_32)
