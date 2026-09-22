@@ -1,0 +1,43 @@
+name: Build Vita Stream
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-pc:
+    name: Build Windows PC client
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure
+        run: cmake -S pc -B pc/build
+      - name: Build
+        run: cmake --build pc/build --config Release
+      - name: Upload PC artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: VitaStream-PC-Windows
+          path: pc/build/Release/VitaStreamPC.exe
+          if-no-files-found: error
+
+  build-vita:
+    name: Build PS Vita VPK
+    runs-on: ubuntu-latest
+    container:
+      image: vitasdk/vitasdk:latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure Vita build
+        run: cmake -S vita -B vita/build
+      - name: Build Vita VPK
+        run: cmake --build vita/build -j2
+      - name: Upload Vita artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: VitaStream-PSVita
+          path: vita/build/vitastream.vpk
+          if-no-files-found: error
